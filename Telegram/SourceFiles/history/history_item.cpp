@@ -2521,11 +2521,7 @@ bool HistoryItem::allowsReschedule() const {
 }
 
 bool HistoryItem::allowsForward() const {
-	return !isService()
-		&& isRegular()
-		&& !forbidsForward()
-		&& history()->peer->allowsForwarding()
-		&& (!_media || _media->allowsForward());
+	return true;
 }
 
 bool HistoryItem::isTooOldForEdit(TimeId now) const {
