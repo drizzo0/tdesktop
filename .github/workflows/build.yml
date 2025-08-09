@@ -1,0 +1,68 @@
+name: Build Telegram Desktop
+
+on:
+  push:
+    branches:
+      - "**" # runs on all branches after commit
+
+jobs:
+  build:
+    runs-on: self-hosted
+
+    env:
+      TDESKTOP_API_ID: ${{ secrets.TDESKTOP_API_ID }}
+      TDESKTOP_API_HASH: ${{ secrets.TDESKTOP_API_HASH }}
+
+    steps:
+      - name: Update repository
+        working-directory: /usr/src/tdesktop
+        run: |
+          git reset --hard
+          git clean -fd
+          git pull --rebase
+
+      # Debug build
+      - name: Build Debug
+        working-directory: /usr/src/tdesktop
+        run: |
+          docker run --rm -u $(id -u) \
+            -v "/usr/src/tdesktop:/usr/src/tdesktop" \
+            -e CONFIG=Debug \
+            tdesktop:centos_env \
+            /usr/src/tdesktop/Telegram/build/docker/centos_env/build.sh \
+            -D TDESKTOP_API_ID=${TDESKTOP_API_ID} \
+            -D TDESKTOP_API_HASH=${TDESKTOP_API_HASH}
+
+      - name: Upload Debug Build
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: debug-${{ github.sha }}
+          name: Debug Build ${{ github.sha }}
+          draft: false
+          prerelease: true
+          files: /usr/src/tdesktop/out/Debug/Telegram 
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Release build
+      - name: Build Release
+        working-directory: /usr/src/tdesktop
+        run: |
+          docker run --rm -u $(id -u) \
+            -v "/usr/src/tdesktop:/usr/src/tdesktop" \
+            tdesktop:centos_env \
+            /usr/src/tdesktop/Telegram/build/docker/centos_env/build.sh \
+            -D TDESKTOP_API_ID=${TDESKTOP_API_ID} \
+            -D TDESKTOP_API_HASH=${TDESKTOP_API_HASH}
+
+      - name: Upload Release Build
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: release-${{ github.sha }}
+          name: Release Build ${{ github.sha }}
+          draft: false
+          prerelease: false
+          files: /usr/src/tdesktop/out/Debug/Telegram
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
