@@ -33,20 +33,6 @@ jobs:
             -D TDESKTOP_API_ID=${TDESKTOP_API_ID} \
             -D TDESKTOP_API_HASH=${TDESKTOP_API_HASH}
 
-      - name: Strip debug build
-        run: strip --strip-unneeded /usr/src/tdesktop/out/Debug/Telegram
-
-      - name: Upload Debug Build
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: debug-${{ github.sha }}
-          name: Debug Build ${{ github.sha }}
-          draft: false
-          prerelease: true
-          files: /usr/src/tdesktop/out/Debug/Telegram 
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       # Release build
       - name: Build Release
         working-directory: /usr/src/tdesktop
@@ -58,17 +44,21 @@ jobs:
             -D TDESKTOP_API_ID=${TDESKTOP_API_ID} \
             -D TDESKTOP_API_HASH=${TDESKTOP_API_HASH}
 
+      - name: Strip debug build
+        run: strip --strip-unneeded /usr/src/tdesktop/out/Debug/Telegram
+
       - name: Strip release build
         run: strip --strip-unneeded /usr/src/tdesktop/out/Release/Telegram
 
-      - name: Upload Release Build
+      - name: Upload builds
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: release-${{ github.sha }}
-          name: Release Build ${{ github.sha }}
+          tag_name: build-${{ github.sha }}
+          name: Telegram Build ${{ github.sha }}
           draft: false
           prerelease: false
-          files: /usr/src/tdesktop/out/Relese/Telegram
+          files: |
+            /usr/src/tdesktop/out/Debug/Telegram
+            /usr/src/tdesktop/out/Release/Telegram
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
