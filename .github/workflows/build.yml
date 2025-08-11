@@ -59,7 +59,7 @@ jobs:
             -D TDESKTOP_API_HASH=${TDESKTOP_API_HASH}
 
       - name: Strip release build
-        run: strip --strip-unneeded /usr/src/tdesktop/out/Relese/Telegram
+        run: strip --strip-unneeded /usr/src/tdesktop/out/Release/Telegram
 
       - name: Upload Release Build
         uses: softprops/action-gh-release@v2
