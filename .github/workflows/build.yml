@@ -33,6 +33,9 @@ jobs:
             -D TDESKTOP_API_ID=${TDESKTOP_API_ID} \
             -D TDESKTOP_API_HASH=${TDESKTOP_API_HASH}
 
+      - name: Strip debug build
+        run: strip --strip-unneeded /usr/src/tdesktop/out/Debug/Telegram
+
       - name: Upload Debug Build
         uses: softprops/action-gh-release@v2
         with:
@@ -55,6 +58,9 @@ jobs:
             -D TDESKTOP_API_ID=${TDESKTOP_API_ID} \
             -D TDESKTOP_API_HASH=${TDESKTOP_API_HASH}
 
+      - name: Strip release build
+        run: strip --strip-unneeded /usr/src/tdesktop/out/Relese/Telegram
+
       - name: Upload Release Build
         uses: softprops/action-gh-release@v2
         with:
@@ -62,7 +68,7 @@ jobs:
           name: Release Build ${{ github.sha }}
           draft: false
           prerelease: false
-          files: /usr/src/tdesktop/out/Debug/Telegram
+          files: /usr/src/tdesktop/out/Relese/Telegram
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
